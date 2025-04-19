@@ -1,4 +1,6 @@
 ﻿using Domain.Model;
+using Application;
+using System.Drawing;
 
 internal class Program
 {
@@ -8,27 +10,33 @@ internal class Program
         Console.WriteLine("Seja bem vindo ao banco Framework");
         Console.WriteLine("Por favor, identifique-se");
         Console.WriteLine("");
-        var pessoa = Identificacao();
+        var cliente = Identificacao();
     }
 
-    static Pessoa Identificacao()
+    static Cliente Identificacao()
     {
-        var pessoa = new Pessoa();
+        var cliente = new Cliente();
+        var calculo = new Calculo();
 
         Console.WriteLine("Seu número de identificação:");
-        pessoa.Id = int.Parse(Console.ReadLine());
+        cliente.Id = int.Parse(Console.ReadLine());
 
         Console.WriteLine("Seu nome:");
-        pessoa.Nome = Console.ReadLine();
+        cliente.Nome = Console.ReadLine();
 
         Console.WriteLine("Seu CPF:");
-        pessoa.Cpf = Console.ReadLine();
-        Console.Clear();
+        cliente.Cpf = Console.ReadLine();
+
+        Console.WriteLine("Seu saldo:");
+        cliente.Saldo = float.Parse(Console.ReadLine());
 
         string opcao;
+        float deposito;
+        float saque;
         do
         {
-            Console.WriteLine($"Como posso ajudar {pessoa.Nome}?");
+            Console.Clear();
+            Console.WriteLine($"Como posso ajudar {cliente.Nome}?");
             Console.WriteLine("1 - Depósito");
             Console.WriteLine("2 - Saque");
             Console.WriteLine("3 - Sair");
@@ -38,25 +46,29 @@ internal class Program
 
             if (opcao == "1")
             {
-                Console.WriteLine("Depósito");
-                return pessoa;
+                Console.Clear();
+                Console.WriteLine("Digite o valor:");
+                deposito = float.Parse(Console.ReadLine());
+                cliente.Saldo = calculo.Soma(cliente.Saldo, deposito);
+                Console.WriteLine($"Saldo atual é: {cliente.Saldo}");
+                Console.ReadKey();
             }
             else if (opcao == "2")
             {
-                Console.WriteLine("Saque");
-                return pessoa;
+                Console.Clear();
+                Console.WriteLine("Digite o valor:");
+                saque = float.Parse(Console.ReadLine());
+                cliente.Saldo = calculo.Subtracao(cliente.Saldo, saque);
+                Console.WriteLine($"Saldo atual é: {cliente.Saldo}");
+                Console.ReadKey();
             }
             else if (opcao == "3")
             {
                 break;
             }
-            else
-            {
-                Console.Clear();
-            }
 
         } while (opcao != "3");
 
-        return pessoa;
+        return cliente;
     }
 }
