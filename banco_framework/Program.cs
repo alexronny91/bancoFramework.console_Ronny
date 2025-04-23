@@ -1,5 +1,6 @@
 ﻿using Domain.Model;
 using Application;
+using CpfCnpjLibrary;
 using System.Drawing;
 
 internal class Program
@@ -17,22 +18,71 @@ internal class Program
     {
         var cliente = new Cliente();
         var calculo = new Calculo();
-
-        Console.WriteLine("Seu número de identificação:");
-        cliente.Id = int.Parse(Console.ReadLine());
-
-        Console.WriteLine("Seu nome:");
-        cliente.Nome = Console.ReadLine();
-
-        Console.WriteLine("Seu CPF:");
-        cliente.Cpf = Console.ReadLine();
-
-        Console.WriteLine("Seu saldo:");
-        cliente.Saldo = float.Parse(Console.ReadLine());
-
+        List<string> erros = new List<string>();
         string opcao;
         float deposito;
         float saque;
+        Boolean cpfValido;
+
+        do
+        {
+            erros.Clear();
+
+            Console.WriteLine("Seu número de identificação:");
+            string inputId = Console.ReadLine();
+
+            if (int.TryParse(inputId, out int id) && id > 0)
+            {
+                cliente.Id = id;
+            }
+            else
+            {
+                erros.Add("Identificador não é válido");
+            }
+
+            Console.WriteLine("Seu nome:");
+            cliente.Nome = Console.ReadLine();
+
+            Console.WriteLine("Seu CPF:");
+            cliente.Cpf = Console.ReadLine();
+            cpfValido = Cpf.Validar(cliente.Cpf);
+
+            if (!cpfValido)
+            {
+                erros.Add("CPF digitado não é válido");
+            }        
+
+            Console.WriteLine("Seu saldo:");
+            string inputSaldo = Console.ReadLine();
+
+            if (float.TryParse(inputSaldo, out float saldo) && saldo >= 0)
+            {
+                cliente.Saldo = saldo;
+            }
+            else
+            {
+                erros.Add("Saldo não é válido");
+            }
+
+            if (erros.Count == 0)
+            {
+                break;
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("Ocorreram os seguintes erros:");
+                foreach (var erro in erros)
+                {
+                    Console.WriteLine($"- {erro}");
+                }
+                Console.ReadKey();
+                Console.Clear();
+            }
+
+        }
+        while (true);
+
         do
         {
             Console.Clear();
@@ -66,7 +116,6 @@ internal class Program
             {
                 break;
             }
-
         } while (opcao != "3");
 
         return cliente;
